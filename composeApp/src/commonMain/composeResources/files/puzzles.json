@@ -1,0 +1,93 @@
+[
+  {
+    "id": "puzzle_001",
+    "word": "Cabeza",
+    "dateAdded": "2025-05-20",
+    "language": "Spanish",
+    "definition": "the head; the thing that holds your brain",
+    "example": "Mi mamá dice que tengo un cabezote.",
+    "hint1": {
+      "type": "com.example.pont.data.Hint.TextHint",
+      "text": "French people loved to do this during their 1789 revolution."
+    },
+    "hint2": {
+      "type": "com.example.pont.data.Hint.TextHint",
+      "text": "To cut off the head of a person or animal"
+    },
+    "answer": "Decapitate",
+    "funFact": {
+      "title": "Decapitate",
+      "items": [
+        {
+          "type": "com.example.pont.data.ArticleItem.Paragraph",
+          "text": "The word was coined by Horace Walpole in 1754."
+        },
+        {
+          "type": "com.example.pont.data.ArticleItem.Paragraph",
+          "text": "yo yo yo this is crazy"
+        },
+        {
+          "type": "com.example.pont.data.ArticleItem.Bibliography",
+          "sources": ["Oxford English Dictionary", "Wikipedia"],
+          "isExpanded": false
+        }
+      ]
+    },
+    "isSolved": false
+  } ,
+  {
+    "id": "puzzle_002",
+    "word": "Traer",
+    "dateAdded": "2025-05-21",
+    "language": "Spanish",
+    "definition": "To bring something with oneself or towards oneself",
+    "example": "No importa lo adorables que sean, no puedes llevar a tus gatos contigo al gimnasio",
+    "hint1": {
+      "type": "com.example.pont.data.Hint.TextHint",
+      "text": "Your mom gaslights you into thinking your this."
+    },
+    "hint2": {
+      "type": "com.example.pont.data.Hint.TextHint",
+      "text": "To be appealing to people"
+    },
+    "answer": "Attractive",
+    "funFact": {
+      "title": "Attractive",
+      "items": [
+        {
+          "type": "com.example.pont.data.ArticleItem.Paragraph",
+          "text": "Cats have lived in close association with humans for at least 9,500 years."
+        }
+      ]
+    },
+    "isSolved": false
+  },
+  {
+    "id": "puzzle_003",
+    "word": "Nacer",
+    "dateAdded": "2025-05-21",
+    "language": "Spanish",
+    "definition": "To be born",
+    "example": "Nací para este trabajo",
+    "hint1": {
+      "type": "com.example.pont.data.Hint.ImageHint",
+      "imageResId": "mona_lisa",
+      "caption": "Renaissance Paintings"
+    },
+    "hint2": {
+      "type": "com.example.pont.data.Hint.TextHint",
+      "text": "a period of renewed interest in something"
+    },
+    "answer": "Renaissance",
+    "funFact": {
+      "title": "Renaissance",
+      "items": [
+        {
+          "type": "com.example.pont.data.ArticleItem.Paragraph",
+          "text": "Cats have lived in close association with humans for at least 9,500 years."
+        }
+      ]
+    },
+    "isSolved": false
+  }
+]
