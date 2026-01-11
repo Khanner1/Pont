@@ -76,7 +76,7 @@ fun AppNavigation() {
             modifier = Modifier.padding(innerPadding)) {
             composable<Home> {
                 HomeScreen(
-                    onPlayRandomPuzzle = { puzzleId ->
+                    onPlaySelectedPuzzle = { puzzleId ->
                         navController.navigate(PuzzleRoute(puzzleId = puzzleId))
                     },
                     onGoToLibrary = { navController.navigate(Library) })
