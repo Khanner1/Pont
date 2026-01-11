@@ -29,11 +29,10 @@ kotlin {
         iosSimulatorArm64()
     ).forEach { iosTarget ->
         iosTarget.binaries.framework {
-            baseName = "composeApp"
+            baseName = "ComposeApp"  // Changed to match Swift import
             isStatic = true
         }
     }
-
 
     sourceSets {
         androidMain.dependencies {
@@ -42,9 +41,11 @@ kotlin {
             implementation(libs.ktor.client.okhttp)
             implementation("androidx.media3:media3-exoplayer:1.3.1")
         }
+
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
         }
+
         commonMain.dependencies {
             implementation(compose.runtime)
             implementation(compose.foundation)
@@ -53,20 +54,25 @@ kotlin {
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
 
-            implementation(libs.androidx.room.runtime) // Use the latest KMP version
-            implementation(libs.androidx.room.compiler)
-            implementation("androidx.sqlite:sqlite-bundled:2.5.0-alpha12")
+            // Room - Runtime only, compiler goes in KSP dependencies below
+            implementation(libs.androidx.room.runtime)
+            implementation(libs.androidx.sqlite.bundled)
 
+            // Navigation & Lifecycle
             implementation(libs.navigation.compose)
             implementation(libs.lifecycle.runtime.compose)
             implementation(libs.material.icons.core)
 
+            // Ktor
             implementation(libs.ktor.client.core)
             implementation(libs.ktor.client.content.negotiation)
             implementation(libs.ktor.serialization.kotlinx.json)
 
+            // Coil
             implementation(libs.coil.compose)
             implementation(libs.coil.network.ktor)
+
+            // Koin
             implementation(libs.koin.core)
             implementation(libs.koin.compose.viewmodel)
         }
@@ -84,16 +90,19 @@ android {
         versionCode = 1
         versionName = "1.0"
     }
+
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+
     buildTypes {
         getByName("release") {
             isMinifyEnabled = false
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
@@ -110,16 +119,16 @@ android {
 dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
 
-
-    // 1. ADD THIS LINE for Android support
-    add("kspAndroid", libs.androidx.room.compiler)
-
-    // 2. This is also recommended for KMP projects to ensure common code is processed
+    // Room KSP for all platforms
     add("kspCommonMainMetadata", libs.androidx.room.compiler)
-
-
+    add("kspAndroid", libs.androidx.room.compiler)
     add("kspIosX64", libs.androidx.room.compiler)
     add("kspIosArm64", libs.androidx.room.compiler)
     add("kspIosSimulatorArm64", libs.androidx.room.compiler)
+}
 
+tasks.configureEach {
+    if (name.startsWith("ksp") && name.contains("Kotlin") && name != "kspCommonMainKotlinMetadata") {
+        dependsOn("kspCommonMainKotlinMetadata")
+    }
 }
