@@ -7,4 +7,5 @@ import platform.Foundation.NSLog
 fun MainViewController() = ComposeUIViewController {
     NSLog("🟢 MainViewController: About to render AppNavigation")
     AppNavigation()
+
 }

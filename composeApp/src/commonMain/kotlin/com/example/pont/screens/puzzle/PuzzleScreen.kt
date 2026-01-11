@@ -6,6 +6,7 @@ import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animate
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.keyframes
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
@@ -90,6 +91,7 @@ import com.example.pont.data.ArticleItem
 import com.example.pont.data.Hint
 import com.example.pont.data.Puzzle
 import com.example.pont.data.getDrawable
+import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
@@ -108,17 +110,47 @@ fun PuzzleScreen(
 
     val puzzle by puzzleViewModel.puzzle.collectAsState()
     val currentPuzzle = puzzle ?: return
-    //val guessCount by puzzleViewModel.guessCount.collectAsState()
     val showHint2 by puzzleViewModel.showHint2.collectAsState()
     val showAnswer by puzzleViewModel.showAnswer.collectAsState()
     val guessCount by puzzleViewModel.guessCount.collectAsState()
 
+    var isSuccess by remember {mutableStateOf(false)}
+    var shakeTrigger by remember {mutableStateOf(0)}
+
     val maxAttempts = 2
     val attemptsRemaining = maxAttempts - guessCount.coerceAtLeast(0)
 
-
-
     val scrollState = rememberScrollState()
+
+    LaunchedEffect(Unit) {
+        puzzleViewModel.lastGuessResult.collect { correct ->
+            if(correct) {
+                isSuccess = true
+            } else {
+                isSuccess = false
+                shakeTrigger++
+            }
+        }
+    }
+
+    LaunchedEffect(showAnswer) {
+        if (showAnswer) {
+            // 1. Start the scroll immediately
+            scrollState.animateScrollTo(
+                value = scrollState.maxValue,
+                animationSpec = tween(durationMillis = 800) // Explicit duration
+            )
+        }
+    }
+
+    var panelReveal by remember {mutableStateOf(false)}
+
+    LaunchedEffect(showAnswer) {
+        if(showAnswer) {
+            delay(600)
+            panelReveal = true
+        }
+    }
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -135,6 +167,9 @@ fun PuzzleScreen(
 
         WordInputRow(
             wordLength = currentPuzzle.answer.length,
+            attemptsRemaining = attemptsRemaining,
+            isSuccess = isSuccess,
+            shakeTrigger = shakeTrigger,
             onSubmit = puzzleViewModel::submitGuess
         )
 
@@ -147,25 +182,12 @@ fun PuzzleScreen(
 
         Spacer(modifier = Modifier.height(80.dp))
 
-        /*ArticleCard(
-            articleContent = currentPuzzle.funFact,
-            cardTitle = "Answer",
-            isRevealed = showAnswer
-        )*/
-
         ArticleView(
             article = currentPuzzle.funFact,
-            isRevealed = showAnswer,
+            isRevealed = panelReveal,
             attemptsRemaining = attemptsRemaining,
             modifier = Modifier.padding(16.dp)
         )
-
-        /*AnimatedVisibility(visible = showAnswer) {
-            ArticleView(
-                firstTestPuzzle.funFact,
-                modifier = Modifier.padding(16.dp)
-            )
-        }*/
 
     }
 
@@ -269,15 +291,63 @@ fun ExpandableInfoCard(
 @Composable
 fun WordInputRow(
     wordLength: Int,
-    onSubmit: (String) -> Unit
+    attemptsRemaining: Int,
+    isSuccess: Boolean,
+    shakeTrigger: Int,
+    onSubmit: (String) -> Unit,
 ) {
     var enteredWord by remember {mutableStateOf("")}
+    var flashColor by remember {mutableStateOf<Color?>(null)}
+    var isUILocked by remember {mutableStateOf(false)}
+
+    LaunchedEffect(shakeTrigger) {
+        if (shakeTrigger > 0) {
+            flashColor = Color.Red
+            delay(500)
+            flashColor = null
+
+            if (attemptsRemaining <= 0) {
+                isUILocked = true
+            }
+        }
+    }
+
+    LaunchedEffect(isSuccess) {
+        if(isSuccess) {
+            flashColor = Color.Green
+            delay(500)
+            flashColor = null
+            isUILocked = true
+        }
+    }
+
+    val borderColor = flashColor ?: MaterialTheme.colorScheme.outline
+
+    val animOffset = remember(shakeTrigger) { androidx.compose.animation.core.Animatable(0f) }
+    LaunchedEffect(shakeTrigger) {
+        if (shakeTrigger > 0) {
+            animOffset.animateTo(
+                targetValue = 0f,
+                animationSpec = keyframes {
+                    durationMillis = 400
+                    -10f at 50
+                    10f at 100
+                    -10f at 150
+                    10f at 200
+                    -5f at 250
+                    5f at 300
+                    0f at 400
+                }
+            )
+        }
+    }
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 32.dp)
+            .offset(x = animOffset.value.dp)
     ) {
         OutlinedTextField(
             value = enteredWord,
@@ -286,8 +356,14 @@ fun WordInputRow(
                     enteredWord = newValue.uppercase().filter {!it.isWhitespace()}
                 }
             },
+            enabled = !isUILocked,
             label = {Text("Enter Answer ($wordLength letters)")},
             singleLine = true,
+            colors = TextFieldDefaults.colors(
+                focusedIndicatorColor = borderColor,
+                unfocusedIndicatorColor = borderColor,
+                errorIndicatorColor = Color.Red
+            ),
             modifier = Modifier.fillMaxWidth(),
             textStyle = TextStyle(
                 textAlign = TextAlign.Center,
@@ -315,7 +391,7 @@ fun WordInputRow(
             onClick = {
                 onSubmit(enteredWord)
             },
-            enabled = enteredWord.length == wordLength,
+            enabled = enteredWord.length ==  wordLength && !isUILocked,
             modifier = Modifier.width(150.dp)
         ) {
             Text(text = "Submit")

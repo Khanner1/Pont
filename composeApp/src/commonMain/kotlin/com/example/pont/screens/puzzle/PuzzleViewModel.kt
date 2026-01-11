@@ -8,8 +8,11 @@ import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.pont.data.LocalPuzzleRepository
 import com.example.pont.data.Puzzle
 import com.example.pont.data.PuzzleRepository
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -29,6 +32,9 @@ class PuzzleViewModel(
 
     private val _showAnswer = MutableStateFlow(false)
     val showAnswer: StateFlow<Boolean> = _showAnswer.asStateFlow()
+
+    private val _lastGuessResult = MutableSharedFlow<Boolean>()
+    val lastGuessResult: SharedFlow<Boolean> = _lastGuessResult.asSharedFlow()
 
 
     suspend fun loadPuzzle(puzzleId: String) {
@@ -54,8 +60,13 @@ class PuzzleViewModel(
 
     fun submitGuess(guess: String) {
         val currentPuzzle = _puzzle.value ?: return
+        val isCorrect = guess.equals(currentPuzzle.answer, ignoreCase = true)
 
-        if (guess.equals(currentPuzzle.answer, ignoreCase = true)) {
+        viewModelScope.launch {
+            _lastGuessResult.emit(isCorrect)
+        }
+
+        if (isCorrect) {
             handlePuzzleCompletion(currentPuzzle.id)
         } else {
             when (_guessCount.value) {
