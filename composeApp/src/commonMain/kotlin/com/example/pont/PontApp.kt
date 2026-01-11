@@ -38,7 +38,10 @@ data class PuzzleRoute(val puzzleId: String)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppNavigation() {
+    println("🟢 AppNavigation: Starting")
+
     val navController = rememberNavController()
+    println("🟢 AppNavigation: NavController created")
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentDestination = navBackStackEntry?.destination
