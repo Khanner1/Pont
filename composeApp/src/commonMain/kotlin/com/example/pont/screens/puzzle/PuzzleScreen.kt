@@ -1,6 +1,6 @@
 package com.example.pont.ui.puzzle
 
-import android.util.Log
+
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animate
@@ -22,10 +22,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.magnifier
+
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -70,9 +67,8 @@ import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.text.ParagraphStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -84,7 +80,6 @@ import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextIndent
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -95,6 +90,7 @@ import com.example.pont.data.ArticleItem
 import com.example.pont.data.Hint
 import com.example.pont.data.Puzzle
 import com.example.pont.data.getDrawable
+import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -337,7 +333,6 @@ fun Hints(
     //var hint2Revealed by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
-        Log.d("Hints", "hint 1 revealed")
         hint1Revealed = true
     }
 
@@ -438,7 +433,10 @@ fun ArticleView(
 ) {
 
     var articleItems by remember(article) {mutableStateOf(article.items)}
-    val screenWidth = LocalConfiguration.current.screenWidthDp.dp
+    // KMP-compatible way to get screen width
+    val density = LocalDensity.current
+    val windowInfo = LocalWindowInfo.current
+    val screenWidth = with(density) { windowInfo.containerSize.width.toDp() }
 
     val offsetX by animateDpAsState(
         targetValue = if (isRevealed) screenWidth else 0.dp,
@@ -456,7 +454,6 @@ fun ArticleView(
             verticalArrangement = Arrangement.spacedBy(12.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Title
             Text(
                 text = article.title,
                 textAlign = TextAlign.Center,
@@ -519,21 +516,12 @@ fun ArticleItemRenderer(
             )
         }
         is ArticleItem.Image -> {
-            val context = LocalContext.current
-
-            val resId = remember(item.imageResId) {
-                context.resources.getIdentifier(item.imageResId, "drawable", context.packageName)
-            }
-
             Column(modifier = Modifier.padding(16.dp)) {
-                AsyncImage(
-                    model = resId,
-                    contentDescription = item.caption,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clip(RoundedCornerShape(8.dp)),
-                    contentScale = ContentScale.FillWidth
+                Image(
+                    painterResource(item.getDrawable()),
+                    contentDescription = item.caption
                 )
+
                 item.caption?.let {
                     Text(
                         text = it,

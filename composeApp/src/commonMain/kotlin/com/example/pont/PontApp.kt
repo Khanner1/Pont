@@ -14,7 +14,6 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -91,13 +90,5 @@ fun AppNavigation() {
                 PuzzleScreen(puzzleId = route.puzzleId)
             }
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun PontAppPreview() {
-    PontTheme {
-        AppNavigation()
     }
 }

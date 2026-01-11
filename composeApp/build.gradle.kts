@@ -23,19 +23,17 @@ kotlin {
         }
     }
 
-    val isMac = System.getProperty("os.name").startsWith("Mac", ignoreCase = true)
-    if (isMac) {
-        listOf(
-            iosX64(),
-            iosArm64(),
-            iosSimulatorArm64()
-        ).forEach { iosTarget ->
-            iosTarget.binaries.framework {
-                baseName = "composeApp"
-                isStatic = true
-            }
+    listOf(
+        iosX64(),
+        iosArm64(),
+        iosSimulatorArm64()
+    ).forEach { iosTarget ->
+        iosTarget.binaries.framework {
+            baseName = "composeApp"
+            isStatic = true
         }
     }
+
 
     sourceSets {
         androidMain.dependencies {
@@ -76,7 +74,7 @@ kotlin {
 }
 
 android {
-    namespace = "com.jetbrains.pont"
+    namespace = "com.example.pont"
     compileSdk = 35
 
     defaultConfig {
@@ -119,10 +117,9 @@ dependencies {
     // 2. This is also recommended for KMP projects to ensure common code is processed
     add("kspCommonMainMetadata", libs.androidx.room.compiler)
 
-    val isMac = System.getProperty("os.name").startsWith("Mac", ignoreCase = true)
-    if (isMac) {
-        add("kspIosX64", libs.androidx.room.compiler)
-        add("kspIosArm64", libs.androidx.room.compiler)
-        add("kspIosSimulatorArm64", libs.androidx.room.compiler)
-    }
+
+    add("kspIosX64", libs.androidx.room.compiler)
+    add("kspIosArm64", libs.androidx.room.compiler)
+    add("kspIosSimulatorArm64", libs.androidx.room.compiler)
+
 }

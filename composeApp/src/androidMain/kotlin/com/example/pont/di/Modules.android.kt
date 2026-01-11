@@ -18,7 +18,6 @@ val androidModule = module {
             name = dbFile.absolutePath,
         )
     }
-
 }
 
 
