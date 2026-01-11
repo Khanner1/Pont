@@ -1,6 +1,5 @@
 package com.example.pont.ui.puzzle
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
