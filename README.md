@@ -1,6 +1,6 @@
 # Pont - Etymology Word Puzzle Game
 
-Pont is a cross-platform word puzzle game that challenges players to discover etymological connections between words in different languages. Built with Kotlin Multiplatform, it works on Android and iOS.
+Pont is a cross-platform word puzzle game that challenges users to discover etymological connections between words in different languages. Built with Kotlin Multiplatform, it works on Android and iOS.
 
 ##  Features
 
@@ -120,3 +120,5 @@ pont/
 ├── settings.gradle.kts           # Project settings
 └── README.md                     # This file
 ```
+
+This project is licensed under the Apache License 2.0
