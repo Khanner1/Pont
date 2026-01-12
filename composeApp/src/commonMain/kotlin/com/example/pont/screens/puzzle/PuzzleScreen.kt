@@ -1,15 +1,12 @@
 package com.example.pont.ui.puzzle
 
-
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.animate
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.keyframes
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -23,28 +20,23 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
-import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -53,39 +45,22 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.clipToBounds
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.input.key.Key
-import androidx.compose.ui.input.key.KeyEvent
-import androidx.compose.ui.input.key.KeyEventType
-import androidx.compose.ui.input.key.key
-import androidx.compose.ui.input.key.onKeyEvent
-import androidx.compose.ui.input.key.type
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalWindowInfo
-import androidx.compose.ui.text.ParagraphStyle
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextIndent
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import coil3.compose.AsyncImage
+import androidx.compose.ui.zIndex
 import com.example.pont.data.Article
 import com.example.pont.data.ArticleItem
 import com.example.pont.data.Hint
@@ -93,9 +68,7 @@ import com.example.pont.data.Puzzle
 import com.example.pont.data.getDrawable
 import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.painterResource
-import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
-
 
 @Composable
 fun PuzzleScreen(
@@ -106,7 +79,6 @@ fun PuzzleScreen(
     LaunchedEffect(puzzleId) {
         puzzleViewModel.loadPuzzle(puzzleId)
     }
-
 
     val puzzle by puzzleViewModel.puzzle.collectAsState()
     val currentPuzzle = puzzle ?: return
@@ -188,9 +160,7 @@ fun PuzzleScreen(
             attemptsRemaining = attemptsRemaining,
             modifier = Modifier.padding(16.dp)
         )
-
     }
-
 }
 
 @Composable
@@ -227,10 +197,10 @@ fun GivenWord(
 
             ExpandableInfoCard(
                 cardTitle = "Example Sentence",
-                content = puzzle.example
+                content = puzzle.example,
+                optionalContent = puzzle.exampleTranslation
             )
         }
-
 
     }
 }
@@ -240,6 +210,7 @@ fun ExpandableInfoCard(
     modifier: Modifier = Modifier,
     cardTitle: String,
     content: String,
+    optionalContent: String? = null,
     initiallyExpanded: Boolean = false
 ) {
     var expanded by remember {mutableStateOf(initiallyExpanded)}
@@ -270,8 +241,6 @@ fun ExpandableInfoCard(
                     imageVector = Icons.Default.KeyboardArrowDown,
                     contentDescription = "Show $cardTitle"
                 )
-
-
             }
 
             AnimatedVisibility(visible = expanded) {
@@ -282,6 +251,17 @@ fun ExpandableInfoCard(
                         fontSize = 16.sp,
                         textAlign = TextAlign.Justify
                     )
+
+                    if (optionalContent != null) {
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = optionalContent,
+                            fontSize = 16.sp,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant, // Differentiates it visually
+                            fontStyle = androidx.compose.ui.text.font.FontStyle.Italic,
+                            textAlign = TextAlign.Justify
+                        )
+                    }
                 }
             }
         }
@@ -449,9 +429,11 @@ fun HintCard(
         label = "hintCardRotation"
     )
 
+    val currentZIndex = if (rotationY > 0f && rotationY < 180f) 1f else 0f
 
     Card(
         modifier = modifier
+            .zIndex(currentZIndex)
             .size(width = cardWidth, height = cardHeight)
             .graphicsLayer {
                 this.rotationY = rotationY
@@ -538,12 +520,10 @@ fun ArticleView(
                 color = MaterialTheme.colorScheme.primary
             )
 
-            // Paragraphs, Images, and Bibliography
             articleItems.forEach { item ->
                 ArticleItemRenderer(
                     item,
                     onToggle = {
-                        // This updates the local state list to toggle expansion
                         articleItems = articleItems.map {
                             if (it === item && it is ArticleItem.Bibliography) {
                                 it.copy(isExpanded = !it.isExpanded)
@@ -566,7 +546,7 @@ fun ArticleView(
                         text = if (attemptsRemaining > 0)
                             "$attemptsRemaining attempts remaining"
                         else
-                            "Revealing Fact",
+                            "Revealing Answer...",
                         textAlign = TextAlign.Center,
                         style = MaterialTheme.typography.headlineLarge,
                         color = MaterialTheme.colorScheme.onSecondaryContainer
@@ -577,7 +557,6 @@ fun ArticleView(
     }
 }
 
-
 @Composable
 fun ArticleItemRenderer(
     item: ArticleItem,
@@ -587,8 +566,13 @@ fun ArticleItemRenderer(
         is ArticleItem.Paragraph -> {
             Text(
                 text = item.text,
-                style = MaterialTheme.typography.bodyMedium, // Body Font
-                modifier = Modifier.padding(horizontal = 16.dp)
+                style = MaterialTheme.typography.bodyMedium.copy(
+                    lineHeight = 24.sp, // Adds breathing room between lines
+                    textAlign = TextAlign.Justify // Gives it a clean "newspaper" paragraph look
+                ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 8.dp)
             )
         }
         is ArticleItem.Image -> {
@@ -597,7 +581,6 @@ fun ArticleItemRenderer(
                     painterResource(item.getDrawable()),
                     contentDescription = item.caption
                 )
-
                 item.caption?.let {
                     Text(
                         text = it,
@@ -623,10 +606,10 @@ fun ArticleItemRenderer(
                             contentDescription = null
                         )
                     }
-
                     if (item.isExpanded) {
                         item.sources.forEach { source ->
                             Text("• $source", style = MaterialTheme.typography.bodySmall)
+                            Spacer(Modifier.height(8.dp))
                         }
                     }
                 }
@@ -634,20 +617,3 @@ fun ArticleItemRenderer(
         }
     }
 }
-
-
-/*@Composable
-@Preview
-fun PuzzleScreenPreview() {
-    PuzzleScreen(puzzleId = "gen_puzzle_001_Cabeza")
-}
-
-@Composable
-@Preview
-fun ArticleViewPreview() {
-    ArticleView(
-        firstTestPuzzle.funFact,
-        isRevealed = true,
-        attemptsRemaining = 3
-    )
-}*/

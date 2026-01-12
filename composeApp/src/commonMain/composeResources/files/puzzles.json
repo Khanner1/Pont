@@ -2,10 +2,11 @@
   {
     "id": "puzzle_001",
     "word": "Cabeza",
-    "dateAdded": "2025-05-20",
+    "dateAdded": "2026-01-05",
     "language": "Spanish",
     "definition": "the head; the thing that holds your brain",
-    "example": "Mi mamá dice que tengo un cabezote.",
+    "example": "Mi mamá dice que tengo un cabezón.",
+    "exampleTranslation": "My mom says I have a big head.",
     "hint1": {
       "type": "com.example.pont.data.Hint.TextHint",
       "text": "French people loved to do this during their 1789 revolution."
@@ -20,15 +21,11 @@
       "items": [
         {
           "type": "com.example.pont.data.ArticleItem.Paragraph",
-          "text": "The word was coined by Horace Walpole in 1754."
-        },
-        {
-          "type": "com.example.pont.data.ArticleItem.Paragraph",
-          "text": "yo yo yo this is crazy"
+          "text": "Cabeza and decapitate both from the latin word caput, which has also branched into English words like capital and captain. Another word that possibly came from caput is chef, as in a professional cook. According to the Oxford English Dictionary, it may have come from the French term “chef de cuisine,” which meant a head or executive chef."
         },
         {
           "type": "com.example.pont.data.ArticleItem.Bibliography",
-          "sources": ["Oxford English Dictionary", "Wikipedia"],
+          "sources": ["American Heritage Dictionary of the English Language. \"Chapter.\" Accessed January 5, 2026. https://www.ahdictionary.com/word/search.html?q=chapter.", "Oxford English Dictionary. \"Chef, n.\" Oxford University Press. Accessed January 5, 2026. https://www.oed.com/.", "Real Academia Española. \"Cabeza.\" Diccionario de la lengua española, 23rd ed. Accessed January 5, 2026. https://dle.rae.es/cabeza."],
           "isExpanded": false
         }
       ]
@@ -38,10 +35,11 @@
   {
     "id": "puzzle_002",
     "word": "Traer",
-    "dateAdded": "2025-05-21",
+    "dateAdded": "2026-01-04",
     "language": "Spanish",
-    "definition": "To bring something with oneself or towards oneself",
-    "example": "No importa lo adorables que sean, no puedes llevar a tus gatos contigo al gimnasio",
+    "definition": "To bring something towards oneself",
+    "example": "El imán trae los objetos de metal hacia él",
+    "exampleTranslation": "The magnet draws (brings) metal objects toward it",
     "hint1": {
       "type": "com.example.pont.data.Hint.TextHint",
       "text": "Your mom gaslights you into thinking your this."
@@ -56,7 +54,11 @@
       "items": [
         {
           "type": "com.example.pont.data.ArticleItem.Paragraph",
-          "text": "Cats have lived in close association with humans for at least 9,500 years."
+          "text": "Attractive and traer both come from the latin root trahĕre. I was just kidding with the hint card. You look amazing."
+        },
+        {
+          "type": "com.example.pont.data.ArticleItem.Bibliography",
+          "sources": ["American Heritage Dictionary of the English Language. \"Attract.\" Accessed January 4, 2026. https://www.ahdictionary.com/word/search.html?q=attract.", "Real Academia Española. \"Traer.\" Diccionario de la lengua española, 23rd ed. Accessed January 4, 2026. https://dle.rae.es/traer."]
         }
       ]
     },
@@ -65,10 +67,11 @@
   {
     "id": "puzzle_003",
     "word": "Nacer",
-    "dateAdded": "2025-05-21",
+    "dateAdded": "2026-01-08",
     "language": "Spanish",
     "definition": "To be born",
-    "example": "Nací para este trabajo",
+    "example": "Nací para este trabajo.",
+    "exampleTranslation": "I was born for this job.",
     "hint1": {
       "type": "com.example.pont.data.Hint.ImageHint",
       "imageResId": "mona_lisa",
@@ -84,7 +87,76 @@
       "items": [
         {
           "type": "com.example.pont.data.ArticleItem.Paragraph",
-          "text": "Cats have lived in close association with humans for at least 9,500 years."
+          "text": "Renaissance and nacer both come from the latin root nascĕre, which is also the root of English words like native and nation. If you go further back to the Proto-Indo-European (a language from which many modern languages evolved from) root genə-, then you can find that related words also include indigenous and gene. "
+        },
+        {
+          "type": "com.example.pont.data.ArticleItem.Bibliography",
+          "sources": ["Oxford English Dictionary. \"Renaissance, n.\" Oxford University Press. Accessed January 8, 2026. https://www.oed.com/dictionary/renaissance_n.", "Real Academia Española. \"Nacer.\" Diccionario de la lengua española, 23rd ed. [Versión 23.7 en línea]. Accessed January 8, 2026. https://dle.rae.es/nacer."]
+        }
+      ]
+    },
+    "isSolved": false
+  },
+  {
+    "id": "puzzle_004",
+    "word": "Crecer",
+    "dateAdded": "2026-01-01",
+    "language": "Spanish",
+    "definition": "To grow; become bigger in size",
+    "example": "Mi sobrino ha crecido mucho desde la última vez que lo vi.",
+    "exampleTranslation": "My nephew has grown a lot since the last time I saw him",
+    "hint1": {
+      "type": "com.example.pont.data.Hint.ImageHint",
+      "imageResId": "orchestra",
+      "caption": "Orchestra"
+    },
+    "hint2": {
+      "type": "com.example.pont.data.Hint.TextHint",
+      "text": "the point at which a sound or piece of music reaches its highest intensity"
+    },
+    "answer": "Crescendo",
+    "funFact": {
+      "title": "Crescendo",
+      "items": [
+        {
+          "type": "com.example.pont.data.ArticleItem.Paragraph",
+          "text": "Crecer and crescendo both come from the latin root crescĕre, which also gave us the English words increase and crescent. According to the Merriam Webster Dictionary, the name of the crescent moon used to only refer to the phases of the moon when it was growing. The Latin root also gives us the word croissant through French, so now, when you think of the moon, you can think of both croissants and cheese."
+        },
+        {
+          "type": "com.example.pont.data.ArticleItem.Bibliography",
+          "sources": ["Merriam-Webster Dictionary. \"Crescent.\" Accessed January 1, 2026. https://www.merriam-webster.com/dictionary/crescent.", "Real Academia Española. \"Crecer.\" Diccionario de la lengua española, 23rd ed. Accessed January 1, 2026. https://dle.rae.es/crecer."]
+        }
+      ]
+    },
+    "isSolved": false
+  },
+  {
+    "id": "puzzle_005",
+    "word": "Bélico",
+    "dateAdded": "2026-01-02",
+    "language": "Spanish",
+    "definition": "warlike; describes anything to do with war",
+    "example": "Los periodistas suelen cubrir noticias en zonas belicas.",
+    "exampleTranslation": "Journalists usually cover news in warzones.",
+    "hint1": {
+      "type": "com.example.pont.data.Hint.TextHint",
+      "text": "The first half of the movie \"Gone With the Wind\" takes place in this time period"
+    },
+    "hint2": {
+      "type": "com.example.pont.data.Hint.TextHint",
+      "text": "A term used to describe a period of time before war, usually referring to the American Civil War"
+    },
+    "answer": "Antebellum",
+    "funFact": {
+      "title": "Antebellum",
+      "items": [
+        {
+          "type": "com.example.pont.data.ArticleItem.Paragraph",
+          "text": "Antebellum and Bélico both come from the latin root bellĭcus, which also gave us the word belligerent. The prefix ante- in antebellum literally means “before”(an easy catch if you know Spanish!)."
+        },
+        {
+          "type": "com.example.pont.data.ArticleItem.Bibliography",
+          "sources": ["Real Academia Española. \"Bélico.\" Diccionario de la lengua española, 23rd ed. Accessed January 2, 2026. https://dle.rae.es/b%C3%A9lico."]
         }
       ]
     },

@@ -1,6 +1,7 @@
 package com.example.pont.ui.home
 
 
+
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -20,32 +20,31 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CardElevation
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.graphics.lerp
-import androidx.compose.ui.modifier.modifierLocalMapOf
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.lerp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.pont.data.Puzzle
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 import kotlin.math.absoluteValue
@@ -62,48 +61,60 @@ fun HomeScreen(
     val puzzles by homeViewModel.allPuzzles.collectAsState()
     var showTutorial by remember {mutableStateOf(false)}
 
-    Box(modifier = Modifier.fillMaxSize()) {
-        IconButton(
-            onClick = { showTutorial = true },
-            modifier = Modifier
-                .align(Alignment.TopEnd)
-                .padding(all = 16.dp )
-        ) {
-            Icon(Icons.Default.Info, contentDescription = "How to play")
-        }
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
 
-        Column(
-            verticalArrangement = Arrangement.SpaceEvenly,
-            modifier = Modifier
-                .fillMaxSize()
-        )
-        {
-            if (puzzles.isNotEmpty()) {
-                PuzzleCarousel(
-                    puzzles = puzzles,
-                    onPuzzleClick = {puzzleId -> onPlaySelectedPuzzle(puzzleId)},
-                    modifier = Modifier.height(250.dp).fillMaxWidth()
-                )
-            } else {
-                // Fallback if list is empty
-                WordOfDay(word = "Loading...", modifier = Modifier.width(350.dp).height(200.dp))
+    Scaffold(
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
+        modifier = modifier.fillMaxSize()
+    ) {
+        Box(modifier = Modifier.fillMaxSize()) {
+            IconButton(
+                onClick = { showTutorial = true },
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(all = 16.dp)
+            ) {
+                Icon(Icons.Default.Info, contentDescription = "How to play")
             }
 
-            MainMenuButtons(
-                modifier = Modifier.align(Alignment.CenterHorizontally),
-                onGoToLibrary = onGoToLibrary,
-                onPlayRandomPuzzle = {
-                    if (puzzles.isNotEmpty()) {
-                        val randomId = puzzles.random().id
-                        onPlaySelectedPuzzle(randomId)
-                    }
-                },
-                clearData = homeViewModel::resetAllProgress
+            Column(
+                verticalArrangement = Arrangement.SpaceEvenly,
+                modifier = Modifier
+                    .fillMaxSize()
             )
-        }
+            {
+                if (puzzles.isNotEmpty()) {
+                    PuzzleCarousel(
+                        puzzles = puzzles,
+                        onPuzzleClick = { puzzleId -> onPlaySelectedPuzzle(puzzleId) },
+                        modifier = Modifier.height(250.dp).fillMaxWidth()
+                    )
+                } else {
+                    WordOfDay(word = "Loading...", modifier = Modifier.width(350.dp).height(200.dp))
+                }
 
-        if (showTutorial) {
-            TutorialDialog (onDismiss = {showTutorial = false})
+                MainMenuButtons(
+                    modifier = Modifier.align(Alignment.CenterHorizontally),
+                    onGoToLibrary = onGoToLibrary,
+                    onPlayRandomPuzzle = {
+                        if (puzzles.isNotEmpty()) {
+                            val randomId = puzzles.random().id
+                            onPlaySelectedPuzzle(randomId)
+                        }
+                    },
+                    clearData = {
+                        homeViewModel.resetAllProgress()
+                        scope.launch {
+                            snackbarHostState.showSnackbar("Puzzle progress has been cleared")
+                        }
+                    }
+                )
+            }
+
+            if (showTutorial) {
+                TutorialDialog(onDismiss = { showTutorial = false })
+            }
         }
     }
 }
@@ -127,7 +138,6 @@ private fun WordOfDay(
             Text(
                 text = "Daily Word:",
                 textAlign = TextAlign.Center,
-                //modifier = Modifier.align(Alignment.CenterHorizontally)
             )
 
             Spacer(modifier = Modifier.height(50.dp))
@@ -136,7 +146,6 @@ private fun WordOfDay(
                 text = word,
                 fontSize = 30.sp,
                 textAlign = TextAlign.Center,
-                //modifier = Modifier.align(Alignment.CenterHorizontally)
             )
         }
     }
@@ -192,11 +201,10 @@ fun PuzzleCarousel(
     HorizontalPager(
         state = pagerState,
         modifier = modifier,
-        contentPadding = PaddingValues(horizontal = 40.dp) // Shows a bit of next/prev cards
+        contentPadding = PaddingValues(horizontal = 40.dp)
     ) { page ->
         val puzzle = puzzles[page]
 
-        // Basic sliding animation: scaling items down when they aren't centered
         Card(
             onClick = { onPuzzleClick(puzzle.id) },
             elevation = CardDefaults.elevatedCardElevation(defaultElevation = 5.dp),
@@ -234,7 +242,6 @@ fun PuzzleCarousel(
 
 @Composable
 fun TutorialDialog(onDismiss: () -> Unit) {
-    // Track which page of the tutorial we are on
     var pageIndex by remember { mutableStateOf(0) }
 
     AlertDialog(
@@ -255,9 +262,9 @@ fun TutorialDialog(onDismiss: () -> Unit) {
             Button(
                 onClick = {
                     if (pageIndex == 0) {
-                        pageIndex = 1 // Go to next page
+                        pageIndex = 1
                     } else {
-                        onDismiss() // Close dialog
+                        onDismiss()
                     }
                 }
             ) {
@@ -265,7 +272,6 @@ fun TutorialDialog(onDismiss: () -> Unit) {
             }
         },
         dismissButton = {
-            // Optional: Show a "Back" button on the second page
             if (pageIndex == 1) {
                 TextButton(onClick = { pageIndex = 0 }) {
                     Text("Back")

@@ -24,9 +24,7 @@ import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -38,9 +36,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.pont.data.Puzzle
-
 import com.example.pont.ui.theme.PontTheme
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
@@ -73,7 +69,6 @@ fun LibraryContent(
     onSelectPuzzle: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
@@ -90,7 +85,6 @@ fun LibraryContent(
             onPuzzleClicked = onSelectPuzzle
         )
     }
-
 }
 
 @Composable
@@ -116,7 +110,6 @@ fun PuzzleList(
             )
         }
     }
-
 }
 
 @Composable
@@ -136,8 +129,7 @@ fun PuzzleListItem(
         modifier = modifier.clickable {
             onPuzzleClicked(puzzle.id)
         }
-            .padding(horizontal = 20.dp)
-        ,
+            .padding(horizontal = 20.dp),
         shape = RoundedCornerShape(10.dp)
     ) {
         Row(
@@ -160,6 +152,7 @@ fun PuzzleListItem(
             }
 
             val statusText = if (puzzle.isSolved) "Solved" else "Not Solved"
+
             Box(
                 modifier = Modifier
                     .weight(0.4f)
@@ -173,7 +166,6 @@ fun PuzzleListItem(
                 )
             }
 
-            //will get replaced by flag picture later
             Box(
                 modifier = Modifier
                     .weight(0.3f)
@@ -216,7 +208,7 @@ fun PuzzleListHeader(
             modifier = modifier
         ) {
             OutlinedTextField(
-                value = selectedOption.toString(),
+                value = selectedOption.toDisplayName(),
                 onValueChange = {},
                 readOnly = true,
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
@@ -231,7 +223,7 @@ fun PuzzleListHeader(
                     //example logcat line delete later
                     //Log.d("MyDropdown", "Creating Item for: $selectedOption")
                     DropdownMenuItem(
-                        text = { Text(text = selectionOption.toString()) },
+                        text = { Text(text = selectionOption.toDisplayName()) },
                         onClick = {
                             onOptionSelected(selectionOption)
                             expanded = false

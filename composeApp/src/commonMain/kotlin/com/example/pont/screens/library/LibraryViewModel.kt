@@ -18,6 +18,13 @@ import kotlinx.coroutines.flow.stateIn
 
 enum class PuzzleFilter {DATE, LANGUAGE, SOLVED, ALPHABETICAL}
 
+fun PuzzleFilter.toDisplayName(): String = when (this) {
+    PuzzleFilter.DATE -> "Date Added"
+    PuzzleFilter.ALPHABETICAL -> "A-Z"
+    // Add other mappings here for your remaining enum entries
+    else -> this.name.lowercase().replaceFirstChar { it.uppercase() }
+}
+
 class LibraryViewModel(
     private val repository: PuzzleRepository
 ) : ViewModel() {
@@ -45,7 +52,7 @@ class LibraryViewModel(
             PuzzleFilter.DATE -> all.sortedByDescending { it.dateAdded }
             PuzzleFilter.LANGUAGE -> all.sortedByDescending { it.language }
             PuzzleFilter.SOLVED -> all.sortedByDescending { it.isSolved }
-            PuzzleFilter.ALPHABETICAL -> all.sortedByDescending { it.word }
+            PuzzleFilter.ALPHABETICAL -> all.sortedBy { it.word }
         }
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
