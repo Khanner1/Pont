@@ -120,7 +120,3 @@ pont/
 ├── settings.gradle.kts           # Project settings
 └── README.md                     # This file
 ```
-
-
-
-```
