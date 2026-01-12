@@ -45,8 +45,8 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 fun LibraryScreen(
     onSelectPuzzle: (String) -> Unit,
-    modifier: Modifier = Modifier,
-    libraryViewModel: LibraryViewModel = koinViewModel()
+    libraryViewModel: LibraryViewModel = koinViewModel(),
+    modifier: Modifier = Modifier
 ) {
     val puzzles by libraryViewModel.displayedPuzzles.collectAsState()
     val filterOption by libraryViewModel.filter.collectAsState()
@@ -89,9 +89,9 @@ fun LibraryContent(
 
 @Composable
 fun PuzzleList(
-    modifier: Modifier = Modifier,
     puzzles: List<Puzzle>,
     onPuzzleClicked: (String) -> Unit,
+    modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp)
 ) {
     LazyColumn(
@@ -114,10 +114,10 @@ fun PuzzleList(
 
 @Composable
 fun PuzzleListItem(
-    modifier: Modifier = Modifier,
     puzzle: Puzzle,
     onPuzzleClicked: (String) -> Unit,
-    highlightColor: Color = MaterialTheme.colorScheme.secondaryContainer,
+    modifier: Modifier = Modifier,
+    highlightColor: Color = MaterialTheme.colorScheme.secondaryContainer
 ) {
     val statusBackgroundColor = if (puzzle.isSolved) {
         Color(0xFFC8E6C9)
@@ -126,17 +126,15 @@ fun PuzzleListItem(
     }
 
     Card(
-        modifier = modifier.clickable {
-            onPuzzleClicked(puzzle.id)
-        }
+        modifier = modifier
+            .clickable { onPuzzleClicked(puzzle.id) }
             .padding(horizontal = 20.dp),
         shape = RoundedCornerShape(10.dp)
     ) {
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .fillMaxHeight()
+            modifier = Modifier.fillMaxHeight()
         ) {
             Box(
                 modifier = Modifier
@@ -146,8 +144,7 @@ fun PuzzleListItem(
             ) {
                 Text(
                     text = puzzle.word,
-                    modifier = Modifier
-                        .align(Alignment.Center)
+                    modifier = Modifier.align(Alignment.Center)
                 )
             }
 
@@ -178,7 +175,6 @@ fun PuzzleListItem(
                     textAlign = TextAlign.Center
                 )
             }
-
         }
     }
 }
@@ -186,15 +182,13 @@ fun PuzzleListItem(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PuzzleListHeader(
-    modifier: Modifier = Modifier,
     selectedOption: PuzzleFilter,
-    onOptionSelected: (PuzzleFilter) -> Unit
+    onOptionSelected: (PuzzleFilter) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     var expanded by remember { mutableStateOf(false) }
 
-    Row(
-        modifier = modifier
-    ) {
+    Row(modifier = modifier) {
         Text(
             text = "Order By:",
             modifier = Modifier
@@ -220,8 +214,6 @@ fun PuzzleListHeader(
                 onDismissRequest = { expanded = false }
             ) {
                 PuzzleFilter.entries.forEach { selectionOption ->
-                    //example logcat line delete later
-                    //Log.d("MyDropdown", "Creating Item for: $selectedOption")
                     DropdownMenuItem(
                         text = { Text(text = selectionOption.toDisplayName()) },
                         onClick = {
@@ -233,14 +225,12 @@ fun PuzzleListHeader(
                 }
             }
         }
-
     }
 }
 
 @Preview
 @Composable
 fun LibraryScreenPreview() {
-
     PontTheme {
         LibraryContent(
             puzzles = emptyList(),

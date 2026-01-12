@@ -1,11 +1,10 @@
 package com.example.pont.data
 
 import kotlinx.serialization.json.Json
-import pont.composeapp.generated.resources.Res // This will be generated after build
+import pont.composeapp.generated.resources.Res
 
 suspend fun loadPuzzles(): List<Puzzle> {
     return try {
-        // Res.readBytes is the KMP way to read files in commonMain
         val bytes = Res.readBytes("files/puzzles.json")
         val jsonString = bytes.decodeToString()
 

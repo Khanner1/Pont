@@ -1,7 +1,5 @@
 package com.example.pont.ui.home
 
-
-
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -57,9 +55,8 @@ fun HomeScreen(
     homeViewModel: HomeViewModel = koinViewModel(),
     modifier: Modifier = Modifier
 ) {
-
     val puzzles by homeViewModel.allPuzzles.collectAsState()
-    var showTutorial by remember {mutableStateOf(false)}
+    var showTutorial by remember { mutableStateOf(false) }
 
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
@@ -80,10 +77,8 @@ fun HomeScreen(
 
             Column(
                 verticalArrangement = Arrangement.SpaceEvenly,
-                modifier = Modifier
-                    .fillMaxSize()
-            )
-            {
+                modifier = Modifier.fillMaxSize()
+            ) {
                 if (puzzles.isNotEmpty()) {
                     PuzzleCarousel(
                         puzzles = puzzles,
@@ -91,11 +86,13 @@ fun HomeScreen(
                         modifier = Modifier.height(250.dp).fillMaxWidth()
                     )
                 } else {
-                    WordOfDay(word = "Loading...", modifier = Modifier.width(350.dp).height(200.dp))
+                    WordOfDay(
+                        word = "Loading...",
+                        modifier = Modifier.width(350.dp).height(200.dp)
+                    )
                 }
 
                 MainMenuButtons(
-                    modifier = Modifier.align(Alignment.CenterHorizontally),
                     onGoToLibrary = onGoToLibrary,
                     onPlayRandomPuzzle = {
                         if (puzzles.isNotEmpty()) {
@@ -108,7 +105,8 @@ fun HomeScreen(
                         scope.launch {
                             snackbarHostState.showSnackbar("Puzzle progress has been cleared")
                         }
-                    }
+                    },
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
                 )
             }
 
@@ -131,13 +129,12 @@ private fun WordOfDay(
         Column(
             modifier = Modifier.align(Alignment.CenterHorizontally),
             horizontalAlignment = Alignment.CenterHorizontally
-        ){
-
+        ) {
             Spacer(modifier = Modifier.height(20.dp))
 
             Text(
                 text = "Daily Word:",
-                textAlign = TextAlign.Center,
+                textAlign = TextAlign.Center
             )
 
             Spacer(modifier = Modifier.height(50.dp))
@@ -145,7 +142,7 @@ private fun WordOfDay(
             Text(
                 text = word,
                 fontSize = 30.sp,
-                textAlign = TextAlign.Center,
+                textAlign = TextAlign.Center
             )
         }
     }
@@ -153,14 +150,12 @@ private fun WordOfDay(
 
 @Composable
 private fun MainMenuButtons(
-    modifier: Modifier = Modifier,
     onGoToLibrary: () -> Unit,
     onPlayRandomPuzzle: () -> Unit,
-    clearData: () -> Unit
-)
-{
+    clearData: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     Column(modifier = modifier) {
-
         val buttonWidth = 200.dp
 
         Button(
@@ -190,12 +185,12 @@ private fun MainMenuButtons(
     }
 }
 
-
 @Composable
 fun PuzzleCarousel(
     puzzles: List<Puzzle>,
     onPuzzleClick: (String) -> Unit,
-    modifier: Modifier = Modifier) {
+    modifier: Modifier = Modifier
+) {
     val pagerState = rememberPagerState(pageCount = { puzzles.size })
 
     HorizontalPager(
@@ -221,7 +216,7 @@ fun PuzzleCarousel(
         ) {
             Box(modifier = Modifier.fillMaxSize()) {
                 Text(
-                    "${puzzle.language}",
+                    text = puzzle.language,
                     fontSize = 14.sp,
                     modifier = Modifier
                         .align(Alignment.TopStart)
@@ -251,11 +246,18 @@ fun TutorialDialog(onDismiss: () -> Unit) {
         },
         text = {
             if (pageIndex == 0) {
-                Text("Pont is a game about finding the hidden connections between words in different languages.")
+                Text(
+                    "Pont is a game about finding the hidden connections between " +
+                            "words in different languages."
+                )
             } else {
                 Text(
-                    "Given a word from a different language(with a definition and an example sentence) than English and hints, try to guess the word in English that is etymologically related to it.\n \n" +
-                        "Note: The non-English Word may have more meanings, but I chose the definition that is most relevant for guessing the answer.")
+                    "Given a word from a different language (with a definition and an " +
+                            "example sentence) than English and hints, try to guess the word " +
+                            "in English that is etymologically related to it.\n\n" +
+                            "Note: The non-English Word may have more meanings, but I chose " +
+                            "the definition that is most relevant for guessing the answer."
+                )
             }
         },
         confirmButton = {

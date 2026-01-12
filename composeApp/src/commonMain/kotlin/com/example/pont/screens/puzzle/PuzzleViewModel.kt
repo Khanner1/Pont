@@ -1,11 +1,7 @@
 package com.example.pont.ui.puzzle
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
-import com.example.pont.data.LocalPuzzleRepository
 import com.example.pont.data.Puzzle
 import com.example.pont.data.PuzzleRepository
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -19,7 +15,7 @@ import kotlinx.coroutines.launch
 
 class PuzzleViewModel(
     private val repository: PuzzleRepository
-) : ViewModel(){
+) : ViewModel() {
 
     private val _puzzle = MutableStateFlow<Puzzle?>(null)
     val puzzle: StateFlow<Puzzle?> = _puzzle.asStateFlow()
@@ -36,7 +32,6 @@ class PuzzleViewModel(
     private val _lastGuessResult = MutableSharedFlow<Boolean>()
     val lastGuessResult: SharedFlow<Boolean> = _lastGuessResult.asSharedFlow()
 
-
     suspend fun loadPuzzle(puzzleId: String) {
         val loadedPuzzle = repository.getPuzzleById(puzzleId)
         _puzzle.value = loadedPuzzle
@@ -51,10 +46,9 @@ class PuzzleViewModel(
             repository.togglePuzzleCompletion(id = puzzleId, isCompleted = true)
 
             _showHint2.value = true
-            _showHint2.value = true
             _showAnswer.value = true
 
-            _puzzle.update {it?.copy(isSolved = true)}
+            _puzzle.update { it?.copy(isSolved = true) }
         }
     }
 
@@ -79,10 +73,6 @@ class PuzzleViewModel(
             }
         }
 
-        _guessCount.update {it + 1}
+        _guessCount.update { it + 1 }
     }
-
-
-
-
 }

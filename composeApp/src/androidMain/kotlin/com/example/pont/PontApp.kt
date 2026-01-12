@@ -14,7 +14,6 @@ class PontApp : Application() {
         super.onCreate()
 
         startKoin {
-            // This is the "magic" line that provides Context to all your modules
             androidContext(this@PontApp)
             modules(
                 androidModule,

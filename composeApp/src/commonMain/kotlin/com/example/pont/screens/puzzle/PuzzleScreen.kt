@@ -1,6 +1,7 @@
 package com.example.pont.ui.puzzle
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
@@ -52,6 +53,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
@@ -73,8 +75,8 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 fun PuzzleScreen(
     puzzleId: String,
-    modifier: Modifier = Modifier,
-    puzzleViewModel: PuzzleViewModel = koinViewModel()
+    puzzleViewModel: PuzzleViewModel = koinViewModel(),
+    modifier: Modifier = Modifier
 ) {
     LaunchedEffect(puzzleId) {
         puzzleViewModel.loadPuzzle(puzzleId)
@@ -86,8 +88,8 @@ fun PuzzleScreen(
     val showAnswer by puzzleViewModel.showAnswer.collectAsState()
     val guessCount by puzzleViewModel.guessCount.collectAsState()
 
-    var isSuccess by remember {mutableStateOf(false)}
-    var shakeTrigger by remember {mutableStateOf(0)}
+    var isSuccess by remember { mutableStateOf(false) }
+    var shakeTrigger by remember { mutableStateOf(0) }
 
     val maxAttempts = 2
     val attemptsRemaining = maxAttempts - guessCount.coerceAtLeast(0)
@@ -96,7 +98,7 @@ fun PuzzleScreen(
 
     LaunchedEffect(Unit) {
         puzzleViewModel.lastGuessResult.collect { correct ->
-            if(correct) {
+            if (correct) {
                 isSuccess = true
             } else {
                 isSuccess = false
@@ -107,18 +109,17 @@ fun PuzzleScreen(
 
     LaunchedEffect(showAnswer) {
         if (showAnswer) {
-            // 1. Start the scroll immediately
             scrollState.animateScrollTo(
                 value = scrollState.maxValue,
-                animationSpec = tween(durationMillis = 800) // Explicit duration
+                animationSpec = tween(durationMillis = 800)
             )
         }
     }
 
-    var panelReveal by remember {mutableStateOf(false)}
+    var panelReveal by remember { mutableStateOf(false) }
 
     LaunchedEffect(showAnswer) {
-        if(showAnswer) {
+        if (showAnswer) {
             delay(600)
             panelReveal = true
         }
@@ -129,11 +130,8 @@ fun PuzzleScreen(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(scrollState)
-    )
-    {
-        GivenWord(
-            puzzle = currentPuzzle
-        )
+    ) {
+        GivenWord(puzzle = currentPuzzle)
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -149,7 +147,7 @@ fun PuzzleScreen(
 
         Hints(
             puzzle = currentPuzzle,
-            revealHint2 = showHint2,
+            revealHint2 = showHint2
         )
 
         Spacer(modifier = Modifier.height(80.dp))
@@ -201,23 +199,22 @@ fun GivenWord(
                 optionalContent = puzzle.exampleTranslation
             )
         }
-
     }
 }
 
 @Composable
 fun ExpandableInfoCard(
-    modifier: Modifier = Modifier,
     cardTitle: String,
     content: String,
     optionalContent: String? = null,
-    initiallyExpanded: Boolean = false
+    initiallyExpanded: Boolean = false,
+    modifier: Modifier = Modifier
 ) {
-    var expanded by remember {mutableStateOf(initiallyExpanded)}
+    var expanded by remember { mutableStateOf(initiallyExpanded) }
 
     Card(
         modifier = modifier,
-        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 5.dp),
+        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 5.dp)
     ) {
         Column(
             modifier = Modifier
@@ -257,8 +254,8 @@ fun ExpandableInfoCard(
                         Text(
                             text = optionalContent,
                             fontSize = 16.sp,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant, // Differentiates it visually
-                            fontStyle = androidx.compose.ui.text.font.FontStyle.Italic,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            fontStyle = FontStyle.Italic,
                             textAlign = TextAlign.Justify
                         )
                     }
@@ -274,11 +271,11 @@ fun WordInputRow(
     attemptsRemaining: Int,
     isSuccess: Boolean,
     shakeTrigger: Int,
-    onSubmit: (String) -> Unit,
+    onSubmit: (String) -> Unit
 ) {
-    var enteredWord by remember {mutableStateOf("")}
-    var flashColor by remember {mutableStateOf<Color?>(null)}
-    var isUILocked by remember {mutableStateOf(false)}
+    var enteredWord by remember { mutableStateOf("") }
+    var flashColor by remember { mutableStateOf<Color?>(null) }
+    var isUILocked by remember { mutableStateOf(false) }
 
     LaunchedEffect(shakeTrigger) {
         if (shakeTrigger > 0) {
@@ -293,7 +290,7 @@ fun WordInputRow(
     }
 
     LaunchedEffect(isSuccess) {
-        if(isSuccess) {
+        if (isSuccess) {
             flashColor = Color.Green
             delay(500)
             flashColor = null
@@ -303,10 +300,10 @@ fun WordInputRow(
 
     val borderColor = flashColor ?: MaterialTheme.colorScheme.outline
 
-    val animOffset = remember(shakeTrigger) { androidx.compose.animation.core.Animatable(0f) }
+    val animationOffset = remember(shakeTrigger) { Animatable(0f) }
     LaunchedEffect(shakeTrigger) {
         if (shakeTrigger > 0) {
-            animOffset.animateTo(
+            animationOffset.animateTo(
                 targetValue = 0f,
                 animationSpec = keyframes {
                     durationMillis = 400
@@ -327,17 +324,17 @@ fun WordInputRow(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 32.dp)
-            .offset(x = animOffset.value.dp)
+            .offset(x = animationOffset.value.dp)
     ) {
         OutlinedTextField(
             value = enteredWord,
-            onValueChange = {newValue ->
-                if(newValue.length <= wordLength) {
-                    enteredWord = newValue.uppercase().filter {!it.isWhitespace()}
+            onValueChange = { newValue ->
+                if (newValue.length <= wordLength) {
+                    enteredWord = newValue.uppercase().filter { !it.isWhitespace() }
                 }
             },
             enabled = !isUILocked,
-            label = {Text("Enter Answer ($wordLength letters)")},
+            label = { Text("Enter Answer ($wordLength letters)") },
             singleLine = true,
             colors = TextFieldDefaults.colors(
                 focusedIndicatorColor = borderColor,
@@ -358,7 +355,7 @@ fun WordInputRow(
             ),
             keyboardActions = KeyboardActions(
                 onDone = {
-                    if(enteredWord.length == wordLength) {
+                    if (enteredWord.length == wordLength) {
                         onSubmit(enteredWord)
                     }
                 }
@@ -371,7 +368,7 @@ fun WordInputRow(
             onClick = {
                 onSubmit(enteredWord)
             },
-            enabled = enteredWord.length ==  wordLength && !isUILocked,
+            enabled = enteredWord.length == wordLength && !isUILocked,
             modifier = Modifier.width(150.dp)
         ) {
             Text(text = "Submit")
@@ -381,12 +378,11 @@ fun WordInputRow(
 
 @Composable
 fun Hints(
-    modifier : Modifier = Modifier,
     puzzle: Puzzle,
-    revealHint2: Boolean
+    revealHint2: Boolean,
+    modifier: Modifier = Modifier
 ) {
     var hint1Revealed by remember { mutableStateOf(false) }
-    //var hint2Revealed by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         hint1Revealed = true
@@ -416,12 +412,12 @@ fun Hints(
 
 @Composable
 fun HintCard(
-    modifier: Modifier = Modifier,
-    cardTitle : String,
-    hintContent : Hint,
-    isRevealed : Boolean,
+    cardTitle: String,
+    hintContent: Hint,
+    isRevealed: Boolean,
     cardWidth: Dp = 300.dp,
-    cardHeight: Dp = 175.dp
+    cardHeight: Dp = 175.dp,
+    modifier: Modifier = Modifier
 ) {
     val rotationY by animateFloatAsState(
         targetValue = if (isRevealed) 180f else 0f,
@@ -429,11 +425,11 @@ fun HintCard(
         label = "hintCardRotation"
     )
 
-    val currentZIndex = if (rotationY > 0f && rotationY < 180f) 1f else 0f
+    val cardZIndex = if (rotationY > 0f && rotationY < 180f) 1f else 0f
 
     Card(
         modifier = modifier
-            .zIndex(currentZIndex)
+            .zIndex(cardZIndex)
             .size(width = cardWidth, height = cardHeight)
             .graphicsLayer {
                 this.rotationY = rotationY
@@ -448,10 +444,8 @@ fun HintCard(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center
         ) {
-            if(rotationY <= 90f) {
-                Text(
-                    text = cardTitle
-                )
+            if (rotationY <= 90f) {
+                Text(text = cardTitle)
             } else {
                 Box(
                     modifier = Modifier
@@ -470,7 +464,7 @@ fun HintCard(
                         }
                         is Hint.ImageHint -> {
                             Image(
-                                painter = org.jetbrains.compose.resources.painterResource(hintContent.getDrawable()),
+                                painter = painterResource(hintContent.getDrawable()),
                                 contentDescription = hintContent.caption
                             )
                         }
@@ -478,7 +472,6 @@ fun HintCard(
                 }
             }
         }
-
     }
 }
 
@@ -487,11 +480,10 @@ fun ArticleView(
     article: Article,
     isRevealed: Boolean,
     attemptsRemaining: Int,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
+    var articleItems by remember(article) { mutableStateOf(article.items) }
 
-    var articleItems by remember(article) {mutableStateOf(article.items)}
-    // KMP-compatible way to get screen width
     val density = LocalDensity.current
     val windowInfo = LocalWindowInfo.current
     val screenWidth = with(density) { windowInfo.containerSize.width.toDp() }
@@ -522,19 +514,21 @@ fun ArticleView(
 
             articleItems.forEach { item ->
                 ArticleItemRenderer(
-                    item,
+                    item = item,
                     onToggle = {
                         articleItems = articleItems.map {
                             if (it === item && it is ArticleItem.Bibliography) {
                                 it.copy(isExpanded = !it.isExpanded)
-                            } else it
+                            } else {
+                                it
+                            }
                         }
                     }
                 )
             }
         }
 
-        if(offsetX < screenWidth) {
+        if (offsetX < screenWidth) {
             Surface(
                 modifier = Modifier
                     .matchParentSize()
@@ -543,10 +537,11 @@ fun ArticleView(
             ) {
                 Box(contentAlignment = Alignment.Center) {
                     Text(
-                        text = if (attemptsRemaining > 0)
+                        text = if (attemptsRemaining > 0) {
                             "$attemptsRemaining attempts remaining"
-                        else
-                            "Revealing Answer...",
+                        } else {
+                            "Revealing Answer..."
+                        },
                         textAlign = TextAlign.Center,
                         style = MaterialTheme.typography.headlineLarge,
                         color = MaterialTheme.colorScheme.onSecondaryContainer
@@ -567,8 +562,8 @@ fun ArticleItemRenderer(
             Text(
                 text = item.text,
                 style = MaterialTheme.typography.bodyMedium.copy(
-                    lineHeight = 24.sp, // Adds breathing room between lines
-                    textAlign = TextAlign.Justify // Gives it a clean "newspaper" paragraph look
+                    lineHeight = 24.sp,
+                    textAlign = TextAlign.Justify
                 ),
                 modifier = Modifier
                     .fillMaxWidth()
@@ -578,13 +573,13 @@ fun ArticleItemRenderer(
         is ArticleItem.Image -> {
             Column(modifier = Modifier.padding(16.dp)) {
                 Image(
-                    painterResource(item.getDrawable()),
+                    painter = painterResource(item.getDrawable()),
                     contentDescription = item.caption
                 )
                 item.caption?.let {
                     Text(
                         text = it,
-                        style = MaterialTheme.typography.labelSmall, // Caption Font
+                        style = MaterialTheme.typography.labelSmall,
                         modifier = Modifier.padding(top = 4.dp)
                     )
                 }
@@ -601,8 +596,11 @@ fun ArticleItemRenderer(
                         Text("Bibliography", fontWeight = FontWeight.Bold)
                         Spacer(Modifier.weight(1f))
                         Icon(
-                            imageVector = if (item.isExpanded) Icons.Default.KeyboardArrowUp
-                            else Icons.Default.KeyboardArrowDown,
+                            imageVector = if (item.isExpanded) {
+                                Icons.Default.KeyboardArrowUp
+                            } else {
+                                Icons.Default.KeyboardArrowDown
+                            },
                             contentDescription = null
                         )
                     }
